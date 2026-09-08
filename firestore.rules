@@ -1,0 +1,129 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global Safety Net (Catch-all Deny)
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Diagnostic and Connection Verification endpoint
+    match /test/{testId} {
+      allow read, write: if true;
+    }
+
+    // Helper functions
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null && request.auth.uid != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email == 'dnsriraman@gmail.com' ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    function isValidUser(data) {
+      return data.userId is string && data.userId.size() <= 128 &&
+             data.displayName is string && data.displayName.size() <= 100 &&
+             data.email is string && data.email.size() <= 150 &&
+             data.role in ['admin', 'editor', 'viewer'];
+    }
+
+    function isValidProject(data) {
+      return data.id is string && data.id.size() <= 128 &&
+             data.title is string && data.title.size() > 0 && data.title.size() <= 120 &&
+             data.category is string && data.category.size() <= 60 &&
+             data.description is string && data.description.size() <= 1000 &&
+             data.status in ['active', 'completed', 'in_progress', 'concept'] &&
+             (!('techStack' in data) || (data.techStack is list && data.techStack.size() <= 20)) &&
+             (!('githubUrl' in data) || (data.githubUrl is string && data.githubUrl.size() <= 300)) &&
+             (!('liveDemoUrl' in data) || (data.liveDemoUrl is string && data.liveDemoUrl.size() <= 300));
+    }
+
+    function isValidCredential(data) {
+      return data.id is string && data.id.size() <= 128 &&
+             data.type in ['certification', 'achievement', 'experience', 'education'] &&
+             data.title is string && data.title.size() > 0 && data.title.size() <= 150 &&
+             data.organization is string && data.organization.size() <= 150 &&
+             (!('description' in data) || (data.description is string && data.description.size() <= 800)) &&
+             (!('tags' in data) || (data.tags is list && data.tags.size() <= 20));
+    }
+
+    function isValidMessage(data) {
+      return data.id is string && data.id.size() <= 128 &&
+             data.name is string && data.name.size() > 0 && data.name.size() <= 100 &&
+             data.email is string && data.email.size() > 0 && data.email.size() <= 150 &&
+             data.subject is string && data.subject.size() <= 200 &&
+             data.message is string && data.message.size() > 0 && data.message.size() <= 2000 &&
+             data.status in ['new', 'read', 'replied', 'archived'];
+    }
+
+    function isValidLogin(data) {
+      return data.id is string && data.id.size() <= 128 &&
+             data.userId is string && data.userId.size() <= 128 &&
+             data.email is string && data.email.size() <= 150;
+    }
+
+    // Admins Collection
+    match /admins/{adminId} {
+      allow get: if isSignedIn();
+      allow list: if isAdmin();
+      allow write: if isAdmin();
+    }
+
+    // User Profiles
+    match /users/{userId} {
+      allow get: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+      allow list: if isAdmin();
+      allow create: if isSignedIn() && request.auth.uid == userId && isValidUser(incoming());
+      allow update: if isSignedIn() && (request.auth.uid == userId || isAdmin()) && isValidUser(incoming());
+      allow delete: if isAdmin();
+    }
+
+    // Login Activity & Audit Trail
+    match /logins/{loginId} {
+      allow create: if isSignedIn() && isValidLogin(incoming());
+      allow get, list: if isSignedIn() && (isAdmin() || resource.data.userId == request.auth.uid);
+      allow update, delete: if isAdmin();
+    }
+
+    // Projects (Public Showcase - Admin-only CRUD)
+    match /projects/{projectId} {
+      allow get, list: if true;
+      allow create: if isAdmin() && isValidProject(incoming());
+      allow update: if isAdmin() && isValidProject(incoming());
+      allow delete: if isAdmin();
+    }
+
+    // Credentials, Certifications & Milestones (Public Showcase - Admin-only CRUD)
+    match /credentials/{credentialId} {
+      allow get, list: if true;
+      allow create: if isAdmin() && isValidCredential(incoming());
+      allow update: if isAdmin() && isValidCredential(incoming());
+      allow delete: if isAdmin();
+    }
+
+    // Contact Inquiries & Feedback Messages
+    match /messages/{messageId} {
+      allow create: if isValidMessage(incoming());
+      allow get: if isSignedIn() && (isAdmin() || existing().email == request.auth.token.email);
+      allow list: if isSignedIn() && isAdmin();
+      allow update, delete: if isSignedIn() && isAdmin();
+    }
+  }
+}

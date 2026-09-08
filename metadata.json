@@ -1,0 +1,6 @@
+{
+  "name": "Developer Portfolio & Data Management Studio",
+  "description": "Full-stack developer portfolio and content management system with Firebase authentication, real-time Firestore database, and data administration studio.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

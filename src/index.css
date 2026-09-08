@@ -1,0 +1,103 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  code, pre, .font-mono {
+    font-family: 'DM Mono', monospace;
+  }
+}
+
+/* Light mode overrides */
+.light-mode {
+  --bg-main: #f4f8fb;
+  --surface-main: #ffffff;
+  --surface-card: rgba(255, 255, 255, 0.85);
+  --surface-card-hover: #ffffff;
+  --text-main: #11253a;
+  --text-muted: #5f7489;
+  --border-line: rgba(32, 72, 102, 0.18);
+  background-color: var(--bg-main) !important;
+  color: var(--text-main) !important;
+}
+
+.light-mode .theme-bg-main {
+  background-color: #f4f8fb !important;
+}
+
+.light-mode .theme-surface {
+  background-color: #ffffff !important;
+}
+
+.light-mode .theme-card {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  border-color: rgba(32, 72, 102, 0.15) !important;
+}
+
+.light-mode .theme-text-main {
+  color: #11253a !important;
+}
+
+.light-mode .theme-text-muted {
+  color: #5f7489 !important;
+}
+
+.light-mode .theme-border {
+  border-color: rgba(32, 72, 102, 0.18) !important;
+}
+
+/* Custom subtle scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(12, 26, 44, 0.5);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(130, 242, 194, 0.2);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(130, 242, 194, 0.4);
+}
+
+/* Skeleton Loading Shimmer Effect */
+@keyframes skeleton-wave {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
+}
+
+.skeleton-box {
+  background: linear-gradient(
+    90deg,
+    #0f2237 0%,
+    #173454 40%,
+    #1f4269 50%,
+    #173454 60%,
+    #0f2237 100%
+  );
+  background-size: 300% 100%;
+  animation: skeleton-wave 2s infinite ease-in-out;
+}
+
+.light-mode .skeleton-box {
+  background: linear-gradient(
+    90deg,
+    #e2ebf3 0%,
+    #cbdceb 40%,
+    #b6d0e6 50%,
+    #cbdceb 60%,
+    #e2ebf3 100%
+  );
+  background-size: 300% 100%;
+  animation: skeleton-wave 2s infinite ease-in-out;
+}
+
+

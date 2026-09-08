@@ -1,0 +1,290 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile with display name, bio, and role preferences.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "User unique identifier (matches Firebase Auth UID)",
+          "maxLength": 128
+        },
+        "displayName": {
+          "type": "string",
+          "description": "User display name",
+          "maxLength": 100
+        },
+        "email": {
+          "type": "string",
+          "description": "User email address",
+          "maxLength": 150
+        },
+        "role": {
+          "type": "string",
+          "description": "User role (admin or editor or viewer)",
+          "enum": ["admin", "editor", "viewer"]
+        },
+        "bio": {
+          "type": "string",
+          "description": "Short bio or tagline",
+          "maxLength": 500
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "ISO timestamp or server timestamp representation"
+        }
+      },
+      "required": ["userId", "displayName", "email", "role"]
+    },
+    "ProjectItem": {
+      "title": "ProjectItem",
+      "description": "Portfolio and software engineering projects with metadata and links.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique project ID",
+          "maxLength": 128
+        },
+        "title": {
+          "type": "string",
+          "description": "Project title",
+          "maxLength": 120
+        },
+        "category": {
+          "type": "string",
+          "description": "Project domain/category (Embedded Systems, Sustainable Tech, Green Engineering, Digital Services, Web Development, Mobile)",
+          "maxLength": 60
+        },
+        "description": {
+          "type": "string",
+          "description": "Comprehensive project description",
+          "maxLength": 1000
+        },
+        "techStack": {
+          "type": "array",
+          "description": "Array of technology tags"
+        },
+        "githubUrl": {
+          "type": "string",
+          "description": "GitHub repository URL",
+          "maxLength": 300
+        },
+        "liveDemoUrl": {
+          "type": "string",
+          "description": "Live demo or preview URL",
+          "maxLength": 300
+        },
+        "visualType": {
+          "type": "string",
+          "description": "Visual illustration style (helmet, insect, cutter, ration, code, web, iot)",
+          "maxLength": 40
+        },
+        "status": {
+          "type": "string",
+          "description": "Development status (active, completed, in_progress, concept)",
+          "enum": ["active", "completed", "in_progress", "concept"]
+        },
+        "isFeatured": {
+          "type": "boolean",
+          "description": "Whether this project is highlighted on the hero showcase"
+        },
+        "orderIndex": {
+          "type": "number",
+          "description": "Sorting priority"
+        },
+        "createdBy": {
+          "type": "string",
+          "description": "UID of creator",
+          "maxLength": 128
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Creation timestamp"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Last update timestamp"
+        }
+      },
+      "required": ["id", "title", "category", "description", "status"]
+    },
+    "CredentialItem": {
+      "title": "CredentialItem",
+      "description": "Certifications, achievements, awards, and work experience entries.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique entry identifier",
+          "maxLength": 128
+        },
+        "type": {
+          "type": "string",
+          "description": "Entry category",
+          "enum": ["certification", "achievement", "experience", "education"]
+        },
+        "title": {
+          "type": "string",
+          "description": "Title or role name",
+          "maxLength": 150
+        },
+        "organization": {
+          "type": "string",
+          "description": "Issuing organization or institution",
+          "maxLength": 150
+        },
+        "date": {
+          "type": "string",
+          "description": "Date or period range",
+          "maxLength": 80
+        },
+        "description": {
+          "type": "string",
+          "description": "Detailed summary",
+          "maxLength": 800
+        },
+        "link": {
+          "type": "string",
+          "description": "Verification or external reference URL",
+          "maxLength": 300
+        },
+        "tags": {
+          "type": "array",
+          "description": "Associated skills/technologies"
+        },
+        "createdBy": {
+          "type": "string",
+          "description": "Author UID",
+          "maxLength": 128
+        }
+      },
+      "required": ["id", "type", "title", "organization"]
+    },
+    "ContactMessage": {
+      "title": "ContactMessage",
+      "description": "Incoming inquiries and messages from portfolio visitors and recruiters.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique message ID",
+          "maxLength": 128
+        },
+        "name": {
+          "type": "string",
+          "description": "Sender full name",
+          "maxLength": 100
+        },
+        "email": {
+          "type": "string",
+          "description": "Sender email address",
+          "maxLength": 150
+        },
+        "subject": {
+          "type": "string",
+          "description": "Message subject",
+          "maxLength": 200
+        },
+        "message": {
+          "type": "string",
+          "description": "Message content",
+          "maxLength": 2000
+        },
+        "status": {
+          "type": "string",
+          "description": "Inbox status",
+          "enum": ["new", "read", "replied", "archived"]
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Submission time"
+        }
+      },
+      "required": ["id", "name", "email", "subject", "message", "status"]
+    },
+    "LoginRecord": {
+      "title": "LoginRecord",
+      "description": "Recorded authentication and login telemetry sessions.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique session ID",
+          "maxLength": 128
+        },
+        "userId": {
+          "type": "string",
+          "description": "User UID",
+          "maxLength": 128
+        },
+        "displayName": {
+          "type": "string",
+          "description": "User display name",
+          "maxLength": 100
+        },
+        "email": {
+          "type": "string",
+          "description": "User email address",
+          "maxLength": 150
+        },
+        "photoURL": {
+          "type": "string",
+          "description": "Profile picture URL"
+        },
+        "role": {
+          "type": "string",
+          "description": "Assigned role"
+        },
+        "loginAt": {
+          "type": "string",
+          "description": "ISO timestamp of login"
+        },
+        "userAgent": {
+          "type": "string",
+          "description": "Client user agent"
+        },
+        "device": {
+          "type": "string",
+          "description": "Device category"
+        },
+        "mailSent": {
+          "type": "boolean",
+          "description": "Whether instant email was dispatched"
+        },
+        "mailSentTo": {
+          "type": "string",
+          "description": "Notification recipient"
+        }
+      },
+      "required": ["id", "userId", "email", "loginAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "UserProfile" },
+      "description": "Public and private user profile records with permission roles."
+    },
+    "/projects/{projectId}": {
+      "schema": { "$ref": "ProjectItem" },
+      "description": "Managed developer projects showcase."
+    },
+    "/credentials/{credentialId}": {
+      "schema": { "$ref": "CredentialItem" },
+      "description": "Certifications, milestones, achievements, and professional experiences."
+    },
+    "/messages/{messageId}": {
+      "schema": { "$ref": "ContactMessage" },
+      "description": "Incoming inquiries from the contact form."
+    },
+    "/logins/{loginId}": {
+      "schema": { "$ref": "LoginRecord" },
+      "description": "Recorded authentication and login telemetry sessions."
+    },
+    "/test/{testId}": {
+      "schema": "object",
+      "description": "Diagnostic and connection test collection."
+    }
+  }
+}
