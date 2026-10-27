@@ -8,9 +8,16 @@ import dotenv from "dotenv";
 
 dotenv.config({ override: true });
 
-async function startServer() {
+interface CreateAppOptions {
+  enableViteMiddleware?: boolean;
+  serveStaticDist?: boolean;
+}
+
+export async function createApp({
+  enableViteMiddleware = process.env.NODE_ENV !== "production",
+  serveStaticDist = process.env.NODE_ENV === "production",
+}: CreateAppOptions = {}) {
   const app = express();
-  const PORT = 3000;
 
   app.use(express.json());
 
@@ -894,13 +901,13 @@ Open the Settings (gear icon) menu in AI Studio and select "Export to ZIP".
   });
 
   // Vite middleware for development
-  if (process.env.NODE_ENV !== "production") {
+  if (enableViteMiddleware) {
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: "spa",
     });
     app.use(vite.middlewares);
-  } else {
+  } else if (serveStaticDist) {
     const distPath = path.join(process.cwd(), "dist");
     app.use(express.static(distPath));
     app.get("*", (_req, res) => {
@@ -908,9 +915,21 @@ Open the Settings (gear icon) menu in AI Studio and select "Export to ZIP".
     });
   }
 
+  return app;
+}
+
+async function startServer() {
+  const app = await createApp({
+    enableViteMiddleware: process.env.NODE_ENV !== "production",
+    serveStaticDist: process.env.NODE_ENV === "production",
+  });
+  const PORT = parseInt(process.env.PORT || "3000", 10);
+
   app.listen(PORT, "0.0.0.0", () => {
     console.log(`Backend Server running on http://0.0.0.0:${PORT}`);
   });
 }
 
-startServer();
+if (!process.env.VERCEL) {
+  startServer();
+}
